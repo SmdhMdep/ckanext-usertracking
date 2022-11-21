@@ -1,0 +1,138 @@
+{% extends "admin/base.html" %}
+
+{% block primary_content_inner %}
+
+  <section id="usertracking-page-engagement" class="module-content tab-content scrollable">
+    {% block page_engagement_search_form %}
+    {% set sorting = [(_('Engagement'), 'page_count')] %}
+    {% snippet 'snippets/search_form.html', form_id='page-engagement-search-form', type='page', query=q, sorting=sorting, sorting_selected=sort_by_selected, count=page_count, placeholder=_('Search by page... '), show_empty=request.params, no_bottom_border=true %}
+    {% snippet 'snippets/time_range_input.html', form_id='page-engagement-search-form', range_name='page_engagement_time_range', range=page_engagement_time_range %} 
+    {% endblock %}
+      {% if page_engagement_table %}
+      <table class="table table-chunky table-bordered table-striped" id="page-engagement-search-form">
+          <thead>
+          <tr>
+              <th>{{ _('Page') }}</th>
+              <th class="metric">{{ _('Users engaged') }}</th>
+              <th class="metric">{{ _('Minutes engaged') }}</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for page, user_count, mins in page_engagement_table %}
+              <tr>
+              <td>{{ page }}</td>
+              <td class="metric">{{ user_count }}</td>
+              <td class="metric">{{ mins }} mins</td>
+              </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+      {% else %}
+      <p class="empty">{{ _('No page engagement') }}</p>
+      {% endif %}
+  </section>
+
+  <section id="usertracking-org-engagement" class="module-content tab-content scrollable">
+    {% block org_engagement_search_form %}
+    {% set sorting = [(_('Engagement'), 'page_count')] %}
+    {% snippet 'snippets/search_form.html', form_id='org-engagement-search-form', type='organisation', query=q, sorting=sorting, sorting_selected=sort_by_selected, count=org_count, placeholder=_('Search by organisation... '), show_empty=request.params, no_bottom_border=true %}
+    {% snippet 'snippets/time_range_input.html', form_id='org-engagement-search-form', range_name='org_engagement_time_range', range=org_engagement_time_range %} 
+    {% endblock %}
+      {% if org_engagement_table %}
+      <table class="table table-chunky table-bordered table-striped" id="org-engagement-search-form">
+          <thead>
+          <tr>
+              <th>{{ _('Organisation') }}</th>
+              <th class="metric">{{ _('Users engaged') }}</th>
+              <th class="metric">{{ _('Minutes engaged') }}</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for org, user_count, mins in org_engagement_table %}
+              <tr>
+              <td>{{ org }}</td>
+              <td class="metric">{{ user_count }}</td>
+              <td class="metric">{{ mins }} mins</td>
+              </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+      {% else %}
+      <p class="empty">{{ _('No organisation engagement') }}</p>
+      {% endif %}
+  </section>
+
+
+  <section id="usertracking-user-engagement" class="module-content tab-content scrollable">
+    {% block user_engagement_search_form %}
+    {% set sorting = [(_('Engagement'), 'page_count')] %}
+    {% snippet 'snippets/search_form.html', form_id='user-engagement-search-form', type='user', query=q, sorting=sorting, sorting_selected=sort_by_selected, count=user_count, placeholder=_('Search by username... '), show_empty=request.params, no_bottom_border=true %}
+    {% snippet 'snippets/time_range_input.html', form_id='user-engagement-search-form', range_name='user_engagement_time_range', range=user_engagement_time_range %} 
+    {% endblock %}
+    <input id="cursor" name="cursor" value="{{ cursor }}" form="user-engagement-search-form"/>
+    <input id="next" name="next" value="{{ next }}" form="user-engagement-search-form"/>
+      {% if user_engagement_table %}
+      <table class="table table-chunky table-bordered table-striped" id="user-engagement-search-form">
+          <thead>
+          <tr>
+              <th>{{ _('User ID') }}</th>
+              <th>{{ _('Username') }}</th>
+              <th>{{ _('Organisation/s') }}</th>
+              <th class="metric">{{ _('Minutes engaged') }}</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for id, name, org, mins in user_engagement_table %}
+              <tr>
+              <td>{{ id }}</td>
+              <td>{{ name }}</td>
+              <td>{{ org }}</td>
+              <td class="metric">{{ mins }}</td>
+              </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+      <button onclick="prevFunction();">Prev</button>
+      {% else %}
+      <p class="empty">{{ _('No user engagement') }}</p>
+      {% endif %}
+      <button onclick="nextFunction();">Next</button>
+      <script  type="text/javascript">
+        function nextFunction(){
+          document.getElementById("next").value = "true";
+          document.getElementById("user-engagement-search-form").submit();
+        }
+        function prevFunction(){
+          document.getElementById("next").value = "false";
+          document.getElementById("user-engagement-search-form").submit();
+        }
+      </script>
+  </section>
+
+{% endblock %}
+
+{% block secondary_content %}
+  <div class="module module-narrow">
+    <h2 class="module-heading">
+        <i class="fa bar-chart-o"></i>
+      {{ _('User Tracking Menu') }}
+    </h2>
+    <nav data-module="usertracking-nav">
+        <ul class="unstyled nav nav-simple">
+          <li class="nav-item"><a href="#usertracking-page-engagement" data-toggle="tab">{{ _('Page engagement') }}</a></li>
+          <li class="nav-item"><a href="#usertracking-org-engagement" data-toggle="tab">{{ _('Organisation engagement') }}</a></li>
+          <li class="nav-item"><a href="#usertracking-user-engagement" data-toggle="tab">{{ _('User engagement') }}</a></li>
+        </ul>
+      </nav>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  {% asset "ckanext_usertracking/usertracking" %}
+{% endblock %}
+
+{% block style %}
+  {{ super() }}
+  {% asset "ckanext_usertracking/usertracking_css" %}
+{% endblock %}

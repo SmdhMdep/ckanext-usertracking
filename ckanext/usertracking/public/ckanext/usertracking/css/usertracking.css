@@ -1,0 +1,27 @@
+h2 {
+  margin-top: 0px;
+}
+
+section {
+    height: 500px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.module-content {
+  padding-top: 0px;
+}
+
+.search-form {
+  margin-bottom: 5px;
+  padding-bottom: 1px;
+}
+
+.form-control{
+  width: 75%;
+  display: inline-block;
+}
+
+#range{
+  display: block;
+}

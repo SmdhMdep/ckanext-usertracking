@@ -1,0 +1,18 @@
+{# 
+    Usage example:
+    {% snippet 'snippets/range_input.html', form_id='form-id', range_name='table_range', range='24' %} 
+#}
+
+<div class="form-group control-order-by">
+  <label id="label-{{ range_name }}" for="{{ range_name }}">{{ _('Access time range') }}</label>
+  <select id="field-time-{{ range_name }}" name="{{ range_name }}" class="form-control" form="{{ form_id }}" 
+  onchange="this.form.submit()">
+    <option value="{{ range }}" select>Current search covers last {{ range }} hour/s</option>
+    <option value=1>Last hour</option>
+    <option value=24 >Last day</option>
+    <option value=168 >Last week</option>
+    <option value=720 >Last month</option>
+    <option value=8760 >Last year</option>
+  </select>
+  <button type="button" class="btn btn-default" onclick="tableToCSV('{{ form_id }}')">Export table as CSV</button>
+</div>
