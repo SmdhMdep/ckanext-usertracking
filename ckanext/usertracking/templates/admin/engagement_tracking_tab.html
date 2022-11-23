@@ -5,9 +5,10 @@
   <section id="usertracking-page-engagement" class="module-content tab-content scrollable">
     {% block page_engagement_search_form %}
     {% set sorting = [(_('Engagement'), 'page_count')] %}
-    {% snippet 'snippets/search_form.html', form_id='page-engagement-search-form', type='page', query=q, sorting=sorting, sorting_selected=sort_by_selected, count=page_count, placeholder=_('Search by page... '), show_empty=request.params, no_bottom_border=true %}
+    {% snippet 'snippets/search_form.html', form_id='page-engagement-search-form', type='page', query=q, sorting=sorting, sorting_selected=sort_by_selected, count=page_engagement_count, placeholder=_('Search by page... '), show_empty=request.params, no_bottom_border=true %}
     {% snippet 'snippets/time_range_input.html', form_id='page-engagement-search-form', range_name='page_engagement_time_range', range=page_engagement_time_range %} 
     {% endblock %}
+    <input type="number" id="page_engagement_current" name="page_engagement_current" value={{ page_engagement_current }} form="page-engagement-search-form"/>
       {% if page_engagement_table %}
       <table class="table table-chunky table-bordered table-striped" id="page-engagement-search-form">
           <thead>
@@ -22,11 +23,14 @@
               <tr>
               <td>{{ page }}</td>
               <td class="metric">{{ user_count }}</td>
-              <td class="metric">{{ mins }} mins</td>
+              <td class="metric">{{ mins//60 }} mins</td>
               </tr>
           {% endfor %}
           </tbody>
       </table>
+      {% snippet 'snippets/pagination.html', total=page_engagement_total, 
+        current=page_engagement_current, formId='page-engagement-search-form',
+        currentName='page_engagement_current' %}
       {% else %}
       <p class="empty">{{ _('No page engagement') }}</p>
       {% endif %}
@@ -35,9 +39,10 @@
   <section id="usertracking-org-engagement" class="module-content tab-content scrollable">
     {% block org_engagement_search_form %}
     {% set sorting = [(_('Engagement'), 'page_count')] %}
-    {% snippet 'snippets/search_form.html', form_id='org-engagement-search-form', type='organisation', query=q, sorting=sorting, sorting_selected=sort_by_selected, count=org_count, placeholder=_('Search by organisation... '), show_empty=request.params, no_bottom_border=true %}
+    {% snippet 'snippets/search_form.html', form_id='org-engagement-search-form', type='organisation', query=q, sorting=sorting, sorting_selected=sort_by_selected, count=org_engagement_count, placeholder=_('Search by organisation... '), show_empty=request.params, no_bottom_border=true %}
     {% snippet 'snippets/time_range_input.html', form_id='org-engagement-search-form', range_name='org_engagement_time_range', range=org_engagement_time_range %} 
     {% endblock %}
+    <input type="number" id="org_engagement_current" name="org_engagement_current" value={{ org_engagement_current }} form="org-engagement-search-form"/>
       {% if org_engagement_table %}
       <table class="table table-chunky table-bordered table-striped" id="org-engagement-search-form">
           <thead>
@@ -52,11 +57,14 @@
               <tr>
               <td>{{ org }}</td>
               <td class="metric">{{ user_count }}</td>
-              <td class="metric">{{ mins }} mins</td>
+              <td class="metric">{{ mins//60 }} mins</td>
               </tr>
           {% endfor %}
           </tbody>
       </table>
+      {% snippet 'snippets/pagination.html', total=org_engagement_total,
+        current=org_engagement_current, formId='org-engagement-search-form',
+        currentName='org_engagement_current' %}
       {% else %}
       <p class="empty">{{ _('No organisation engagement') }}</p>
       {% endif %}
@@ -66,11 +74,12 @@
   <section id="usertracking-user-engagement" class="module-content tab-content scrollable">
     {% block user_engagement_search_form %}
     {% set sorting = [(_('Engagement'), 'page_count')] %}
-    {% snippet 'snippets/search_form.html', form_id='user-engagement-search-form', type='user', query=q, sorting=sorting, sorting_selected=sort_by_selected, count=user_count, placeholder=_('Search by username... '), show_empty=request.params, no_bottom_border=true %}
+    {% snippet 'snippets/search_form.html', form_id='user-engagement-search-form', type='user', query=q, sorting=sorting, sorting_selected=sort_by_selected, count=user_engagement_count, placeholder=_('Search by username... '), show_empty=request.params, no_bottom_border=true %}
     {% snippet 'snippets/time_range_input.html', form_id='user-engagement-search-form', range_name='user_engagement_time_range', range=user_engagement_time_range %} 
     {% endblock %}
-    <input id="cursor" name="cursor" value="{{ cursor }}" form="user-engagement-search-form"/>
-    <input id="next" name="next" value="{{ next }}" form="user-engagement-search-form"/>
+    <input id="user_engagement_prev_cursor" name="user_engagement_prev_cursor" value="{{ user_engagement_prev_cursor }}" form="user-engagement-search-form"/>
+    <input id="user_engagement_next_cursor" name="user_engagement_next_cursor" value="{{ user_engagement_next_cursor }}" form="user-engagement-search-form"/>
+    <input id="user_engagement_direction" name="user_engagement_direction" value="{{ user_engagement_direction }}" form="user-engagement-search-form"/>
       {% if user_engagement_table %}
       <table class="table table-chunky table-bordered table-striped" id="user-engagement-search-form">
           <thead>
@@ -87,26 +96,22 @@
               <td>{{ id }}</td>
               <td>{{ name }}</td>
               <td>{{ org }}</td>
-              <td class="metric">{{ mins }}</td>
+              <td class="metric">{{ mins }} mins </td> <!--//60-->
               </tr>
           {% endfor %}
           </tbody>
       </table>
-      <button onclick="prevFunction();">Prev</button>
       {% else %}
       <p class="empty">{{ _('No user engagement') }}</p>
       {% endif %}
-      <button onclick="nextFunction();">Next</button>
-      <script  type="text/javascript">
-        function nextFunction(){
-          document.getElementById("next").value = "true";
-          document.getElementById("user-engagement-search-form").submit();
-        }
-        function prevFunction(){
-          document.getElementById("next").value = "false";
-          document.getElementById("user-engagement-search-form").submit();
-        }
-      </script>
+
+      {% if user_engagement_prev_cursor != _('') %}
+        <button onclick="firstPage('user-engagement-search-form');">&lt;&lt; 1</button>
+        <button onclick="prevPage('user-engagement-search-form');">&lt; Prev</button>
+      {% endif %}
+      {% if user_engagement_next_cursor != _('') %}
+        <button onclick="nextPage('user-engagement-search-form');">Next &gt;</button>
+      {% endif %}
   </section>
 
 {% endblock %}

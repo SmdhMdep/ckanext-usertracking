@@ -5,7 +5,7 @@ usertracking_css:
 
 usertracking:
   output: ckanext_usertracking/%(version)s_usertracking.js
-  filters: rjsmin
+  # filters: rjsmin
   extra:
     preload:
       - base/main
@@ -16,6 +16,7 @@ usertracking:
     - js/usertracking_nav.js
     - js/plot.js
     - js/export_table.js
+    - js/pagination_buttons_submit.js
 
 tracking:
   output: ckanext_usertracking/%(version)s_tracking.js

@@ -8,14 +8,11 @@ import ckanext.usertracking.middleware as usertracking_middleware
 import click
 from flask import Blueprint
 import logging
-import six
-import sqlalchemy as sa
 
 import ckan.model as model
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
-from ckan.common import _, g
-from ckan.config.middleware.common_middleware import HostHeaderMiddleware
+from ckan.common import _
 
 c = toolkit.c
 
@@ -37,25 +34,74 @@ def usertracking_view():
     extra_vars = {}
     extra_vars[u'q'] = search = toolkit.request.args.get(u'q', u'')
 
-    range3 = toolkit.request.args.get(u'page_engagement_time_range', u'24')
-    extra_vars[u'page_engagement_time_range'] = range3
-    extra_vars[u'page_engagement_table'], extra_vars[u'page_count'] = tracking.page_engagement_tracking(
-    searched_page=search, time_range=range3)
 
-    range2 = toolkit.request.args.get(u'org_engagement_time_range', u'168')
-    extra_vars[u'org_engagement_time_range'] = range2
-    extra_vars[u'org_engagement_table'], extra_vars[u'org_count'] = tracking.org_engagement_tracking(
-    searched_org=search, time_range=range2)
+    # Page engagement (LIMIT OFFSET PAGINATION)
+    pageTBLprefix =  u'page_engagement_'
 
-    cursor = toolkit.request.args.get(u'cursor', u'9999999')
-    next = toolkit.request.args.get(u'next', u'true')
-    range1 = toolkit.request.args.get(u'user_engagement_time_range', u'168')
-    extra_vars[u'user_engagement_time_range'] = range1
-    extra_vars[u'user_engagement_table'], extra_vars[u'user_count'], extra_vars["cursor"], extra_vars["next"] = tracking.user_engagement_tracking(
-    searched_user=search, time_range=range1, cursor=cursor, next=next)
+    page_engagement_time_range = toolkit.request.args.get(pageTBLprefix+u'time_range', u'24')
+    extra_vars[pageTBLprefix+u'time_range'] = page_engagement_time_range
+    page_engagement_current = int(toolkit.request.args.get(pageTBLprefix+u'current', 1))
+    page_engagement_total = tracking.page_engagement_tracking_size(
+        searched_page=search, time_range=page_engagement_time_range)
 
-    print("\nCursor TK: "+cursor+"\n")
-    print("\nNext: "+next+"\n")
+
+    extra_vars[pageTBLprefix+u'table'], extra_vars[pageTBLprefix+u'count'] = tracking.page_engagement_tracking(
+        searched_page=search, time_range=page_engagement_time_range, page=page_engagement_current)
+    extra_vars[pageTBLprefix+u'current'] = page_engagement_current
+    extra_vars[pageTBLprefix+u'total'] = page_engagement_total
+
+    print("\nPage Current: ",page_engagement_current)
+    print("\nPage Total: ",page_engagement_total)
+
+
+    # Org. engagement (LIMIT OFFSET PAGINATION)
+    orgTBLprefix = u'org_engagement_'
+
+    org_engagement_time_range = toolkit.request.args.get(orgTBLprefix+u'time_range', u'168')
+    org_engagement_current = int(toolkit.request.args.get(orgTBLprefix+u'current', 1))
+    org_engagement_total = tracking.org_engagement_tracking_size(
+        searched_org=search, time_range=org_engagement_time_range)
+
+    print("\nOrg Current: ",org_engagement_current)
+    print("\nOrg Total: ",org_engagement_total)
+
+    extra_vars[orgTBLprefix+u'total'] = org_engagement_total
+    extra_vars[orgTBLprefix+u'current'] = org_engagement_current
+    extra_vars[orgTBLprefix+u'time_range'] = org_engagement_time_range
+    extra_vars[orgTBLprefix+u'table'], extra_vars[orgTBLprefix+u'count'] = tracking.org_engagement_tracking(
+    searched_org=search, time_range=org_engagement_time_range, page=org_engagement_current)
+
+
+    # User engagement (CURSOR PAGINATION)
+    userTBLprefix = u'user_engagement_'
+
+    nc = toolkit.request.args.get(userTBLprefix+u'next_cursor', u'')
+    pc = toolkit.request.args.get(userTBLprefix+u'prev_cursor', u'')
+    dir = toolkit.request.args.get(userTBLprefix+u'direction', u'first')
+    range = toolkit.request.args.get(userTBLprefix+u'time_range', u'168')
+
+    tbl, count, pc, nc, dir = tracking.user_engagement_tracking(
+        searched_user=search, time_range=range, prev_cursor=pc, next_cursor=nc, direction=dir)
+
+    userTBL_vars = {
+        userTBLprefix+u'table': tbl,
+        userTBLprefix+u'count': count,
+        userTBLprefix+u'next_cursor': nc,
+        userTBLprefix+u'prev_cursor': pc,
+        userTBLprefix+u'direction': dir,
+        userTBLprefix+u'time_range': range
+    }
+
+    extra_vars.update(userTBL_vars)
+
+    print("\nPrev Cursor TK: "+pc)
+    # print("\nPrev Cursor vars: ",extra_vars[userTBLprefix+u'prev_cursor'])
+
+    print("\nNext Cursor TK: "+nc)
+    # print("\nNext Cursor vars: ",extra_vars[userTBLprefix+u'next_cursor'])
+
+    print("\nNext TK: "+dir)
+    # print("\nNext vars: ",extra_vars[userTBLprefix+u'direction'])
 
     return toolkit.render(u'admin/engagement_tracking_tab.html', extra_vars)
 
