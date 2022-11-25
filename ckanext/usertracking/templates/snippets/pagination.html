@@ -1,15 +1,45 @@
-<!-- <section class="module"> -->
-<div class="module-content pagination-wrapper">
+{# 
+  Usage example:
+  {% snippet 'snippets/pagination.html', total=PREFIX_total,
+  current=PREFIX_current, formId='PREFIX-search-form',
+  currentPageIDname='PREFIX_current' %}
+#}
+
+
+<div class="center-it">
   <ul class="pagination">
     {% if current != 1 %}
-      <button onclick="getPage({{current - 1}},'{{currentName}}','{{formId}}');">«</button>
+      <button class="btn btn-light" 
+        onclick="getPage('{{current - 1}}','{{currentPageIDname}}','{{formId}}');">&lt;</button>
     {% endif %}
-    {% for index in range(1, total+1) %}
-      <button onclick="getPage({{index}},'{{currentName}}','{{formId}}');">{{ index }}</button>
-    {% endfor %}
+    {% if total < 5 %}
+      {% for index in range(1, total+1) %}
+        <button {% if index == current %} class="btn btn-primary" {% else %} class="btn btn-light" {% endif %} 
+          onclick="getPage('{{index}}','{{currentPageIDname}}','{{formId}}');">{{ index }}
+        </button>
+      {% endfor %}
+    {% else %}
+      <button {% if current == 1 %} class="btn btn-primary" {% else %} class="btn btn-light" {% endif %} 
+        onclick="getPage('{{1}}','{{currentPageIDname}}','{{formId}}');">{{ 1 }}
+      </button>
+      {% if current != 1 and current != total %}
+        <button  class="btn btn-primary" 
+          onclick="getPage('{{ current }}','{{currentPageIDname}}','{{formId}}');">{{ current }}
+        </button>
+      {% endif %}
+      <button {% if current == total %} class="btn btn-primary" {% else %} class="btn btn-light" {% endif %} 
+        onclick="getPage('{{total}}','{{currentPageIDname}}','{{formId}}');">{{ total }}
+      </button>
+    {% endif %}
     {% if current != total %}
-      <button onclick="getPage({{current + 1}},'{{currentName}}','{{formId}}');">»</button>
+      <button class="btn btn-light" 
+      onclick="getPage('{{current + 1}}','{{currentPageIDname}}','{{formId}}');">&gt;</button>
     {% endif %}
   </ul>
+  <label for="{{ currentPageIDname }}" {% if total < 5 %} hidden {% endif %}>
+    &nbsp;| Go to page:
+  </label>
+  <input type="number" id="{{ currentPageIDname }}" name="{{ currentPageIDname }}" 
+    value={{ current }} min=1 max={{ total }} form="{{ formId }}" size=5 
+    {% if total < 5 %} hidden {% endif %} onchange="this.form.submit()" />
 </div>
-<!-- </section> -->

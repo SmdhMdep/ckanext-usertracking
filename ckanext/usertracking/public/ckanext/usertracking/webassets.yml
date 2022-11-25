@@ -5,27 +5,15 @@ usertracking_css:
 
 usertracking:
   output: ckanext_usertracking/%(version)s_usertracking.js
-  # filters: rjsmin
+  filters: rjsmin
   extra:
     preload:
       - base/main
       - ckanext_usertracking/usertracking_css
   contents:
-    - vendor/excanvas.js
-    - vendor/jquery.flot.js
     - js/usertracking_nav.js
-    - js/plot.js
     - js/export_table.js
-    - js/pagination_buttons_submit.js
-
-tracking:
-  output: ckanext_usertracking/%(version)s_tracking.js
-  filters: rjsmin
-  extra:
-    preload:
-      - vendor/jquery
-  contents:
-    - js/tracking.js
+    - js/getPage.js
 
 tracking2:
   output: ckanext_usertracking/%(version)s_tracking2.js

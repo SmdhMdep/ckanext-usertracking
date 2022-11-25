@@ -5,11 +5,13 @@
   <section id="usertracking-page-engagement" class="module-content tab-content scrollable">
     {% block page_engagement_search_form %}
     {% set sorting = [(_('Engagement'), 'page_count')] %}
-    {% snippet 'snippets/search_form.html', form_id='page-engagement-search-form', type='page', query=q, sorting=sorting, sorting_selected=sort_by_selected, count=page_engagement_count, placeholder=_('Search by page... '), show_empty=request.params, no_bottom_border=true %}
+    {% snippet 'snippets/search_form.html', form_id='page-engagement-search-form', type='site page', query=q, sorting=sorting, sorting_selected=sort_by_selected, count=page_engagement_count, placeholder=_('Search by page... '), show_empty=request.params, no_bottom_border=true %}
     {% snippet 'snippets/time_range_input.html', form_id='page-engagement-search-form', range_name='page_engagement_time_range', range=page_engagement_time_range %} 
     {% endblock %}
-    <input type="number" id="page_engagement_current" name="page_engagement_current" value={{ page_engagement_current }} form="page-engagement-search-form"/>
       {% if page_engagement_table %}
+      {% snippet 'snippets/pagination.html', total=page_engagement_total, 
+      current=page_engagement_current, formId='page-engagement-search-form',
+      currentPageIDname='page_engagement_current' %}
       <table class="table table-chunky table-bordered table-striped" id="page-engagement-search-form">
           <thead>
           <tr>
@@ -19,20 +21,20 @@
           </tr>
           </thead>
           <tbody>
-          {% for page, user_count, mins in page_engagement_table %}
+          {% for page, user_count, secs in page_engagement_table %}
               <tr>
               <td>{{ page }}</td>
               <td class="metric">{{ user_count }}</td>
-              <td class="metric">{{ mins//60 }} mins</td>
+              <td class="metric">{{ secs//60 }} mins</td>
               </tr>
           {% endfor %}
           </tbody>
       </table>
       {% snippet 'snippets/pagination.html', total=page_engagement_total, 
         current=page_engagement_current, formId='page-engagement-search-form',
-        currentName='page_engagement_current' %}
+        currentPageIDname='page_engagement_current' %}
       {% else %}
-      <p class="empty">{{ _('No page engagement') }}</p>
+        <p class="empty">{{ _('No page engagement') }}</p>
       {% endif %}
   </section>
 
@@ -42,31 +44,33 @@
     {% snippet 'snippets/search_form.html', form_id='org-engagement-search-form', type='organisation', query=q, sorting=sorting, sorting_selected=sort_by_selected, count=org_engagement_count, placeholder=_('Search by organisation... '), show_empty=request.params, no_bottom_border=true %}
     {% snippet 'snippets/time_range_input.html', form_id='org-engagement-search-form', range_name='org_engagement_time_range', range=org_engagement_time_range %} 
     {% endblock %}
-    <input type="number" id="org_engagement_current" name="org_engagement_current" value={{ org_engagement_current }} form="org-engagement-search-form"/>
       {% if org_engagement_table %}
-      <table class="table table-chunky table-bordered table-striped" id="org-engagement-search-form">
-          <thead>
-          <tr>
-              <th>{{ _('Organisation') }}</th>
-              <th class="metric">{{ _('Users engaged') }}</th>
-              <th class="metric">{{ _('Minutes engaged') }}</th>
-          </tr>
-          </thead>
-          <tbody>
-          {% for org, user_count, mins in org_engagement_table %}
-              <tr>
-              <td>{{ org }}</td>
-              <td class="metric">{{ user_count }}</td>
-              <td class="metric">{{ mins//60 }} mins</td>
-              </tr>
-          {% endfor %}
-          </tbody>
-      </table>
-      {% snippet 'snippets/pagination.html', total=org_engagement_total,
+        {% snippet 'snippets/pagination.html', total=org_engagement_total,
         current=org_engagement_current, formId='org-engagement-search-form',
-        currentName='org_engagement_current' %}
+        currentPageIDname='org_engagement_current' %}
+        <table class="table table-chunky table-bordered table-striped" id="org-engagement-search-form">
+            <thead>
+            <tr>
+                <th>{{ _('Organisation') }}</th>
+                <th class="metric">{{ _('Users engaged') }}</th>
+                <th class="metric">{{ _('Minutes engaged') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for org, user_count, secs in org_engagement_table %}
+                <tr>
+                <td>{{ org }}</td>
+                <td class="metric">{{ user_count }}</td>
+                <td class="metric">{{ secs//60 }} mins</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% snippet 'snippets/pagination.html', total=org_engagement_total,
+          current=org_engagement_current, formId='org-engagement-search-form',
+          currentPageIDname='org_engagement_current' %}
       {% else %}
-      <p class="empty">{{ _('No organisation engagement') }}</p>
+        <p class="empty">{{ _('No organisation engagement') }}</p>
       {% endif %}
   </section>
 
@@ -77,40 +81,35 @@
     {% snippet 'snippets/search_form.html', form_id='user-engagement-search-form', type='user', query=q, sorting=sorting, sorting_selected=sort_by_selected, count=user_engagement_count, placeholder=_('Search by username... '), show_empty=request.params, no_bottom_border=true %}
     {% snippet 'snippets/time_range_input.html', form_id='user-engagement-search-form', range_name='user_engagement_time_range', range=user_engagement_time_range %} 
     {% endblock %}
-    <input id="user_engagement_prev_cursor" name="user_engagement_prev_cursor" value="{{ user_engagement_prev_cursor }}" form="user-engagement-search-form"/>
-    <input id="user_engagement_next_cursor" name="user_engagement_next_cursor" value="{{ user_engagement_next_cursor }}" form="user-engagement-search-form"/>
-    <input id="user_engagement_direction" name="user_engagement_direction" value="{{ user_engagement_direction }}" form="user-engagement-search-form"/>
       {% if user_engagement_table %}
-      <table class="table table-chunky table-bordered table-striped" id="user-engagement-search-form">
-          <thead>
-          <tr>
-              <th>{{ _('User ID') }}</th>
-              <th>{{ _('Username') }}</th>
-              <th>{{ _('Organisation/s') }}</th>
-              <th class="metric">{{ _('Minutes engaged') }}</th>
-          </tr>
-          </thead>
-          <tbody>
-          {% for id, name, org, mins in user_engagement_table %}
-              <tr>
-              <td>{{ id }}</td>
-              <td>{{ name }}</td>
-              <td>{{ org }}</td>
-              <td class="metric">{{ mins }} mins </td> <!--//60-->
-              </tr>
-          {% endfor %}
-          </tbody>
-      </table>
+        {% snippet 'snippets/pagination.html', total=user_engagement_total,
+        current=user_engagement_current, formId='user-engagement-search-form',
+        currentPageIDname='user_engagement_current' %}
+        <table class="table table-chunky table-bordered table-striped" id="user-engagement-search-form">
+            <thead>
+            <tr>
+                <th>{{ _('User ID') }}</th>
+                <th>{{ _('Username') }}</th>
+                <th>{{ _('Organisation/s') }}</th>
+                <th class="metric">{{ _('Minutes engaged') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for id, name, org, secs in user_engagement_table %}
+                <tr>
+                <td>{{ id }}</td>
+                <td>{{ name }}</td>
+                <td>{{ org }}</td>
+                <td class="metric">{{ secs//60 }} mins </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% snippet 'snippets/pagination.html', total=user_engagement_total,
+          current=user_engagement_current, formId='user-engagement-search-form',
+          currentPageIDname='user_engagement_current' %}
       {% else %}
-      <p class="empty">{{ _('No user engagement') }}</p>
-      {% endif %}
-
-      {% if user_engagement_prev_cursor != _('') %}
-        <button onclick="firstPage('user-engagement-search-form');">&lt;&lt; 1</button>
-        <button onclick="prevPage('user-engagement-search-form');">&lt; Prev</button>
-      {% endif %}
-      {% if user_engagement_next_cursor != _('') %}
-        <button onclick="nextPage('user-engagement-search-form');">Next &gt;</button>
+        <p class="empty">{{ _('No user engagement') }}</p>
       {% endif %}
   </section>
 

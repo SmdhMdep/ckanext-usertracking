@@ -14,10 +14,9 @@ This necessitates the creation of the table _user_activity_tracker_ which is pop
 The plugin also provides a CLI commnd to export the last x days of _user_activity_tracker_ into a CSV.
 
 
-## Requirements
+![User Engagement 1 page](./PageEngagement10Page.PNG)
 
-**TODO:** For example, you might want to mention here which versions of CKAN this
-extension works with.
+## Requirements
 
 If your extension works across different versions you can add the following table:
 
@@ -52,7 +51,7 @@ To install ckanext-usertracking:
 
 2. Clone the source and install it on the virtualenv
 
-    git clone https://github.com/.../ckanext-usertracking.git
+    git clone https://gitlab.stfc.ac.uk/smdh/AEP/ckanext-usertracking
     cd ckanext-usertracking
     pip install -e .
 	pip install -r requirements.txt
@@ -68,7 +67,7 @@ To install ckanext-usertracking:
 
 ## Config settings
 
-None at present
+None at present.
 
 **TODO:** Document any optional config settings here. For example:
 
@@ -87,6 +86,7 @@ do:
     python setup.py develop
     pip install -r dev-requirements.txt
 
+    ckan  -c /etc/ckan/default/ckan.ini usertracking export usertracking.csv
 
 ## Tests
 
@@ -94,6 +94,9 @@ To run the tests, do:
 
     pytest --ckan-ini=test.ini
 
+
+**TODO** 
+Review the new release workflow instead of below template.
 
 ## Releasing a new version of ckanext-usertracking
 

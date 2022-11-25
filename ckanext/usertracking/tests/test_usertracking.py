@@ -24,12 +24,15 @@ class TestUsertrackingPlugin(object):
     
     def test_page_engagement_tracking(self):
         rows, count = UserTracking.page_engagement_tracking('','24')
+        # TODO: Modify assert to contain relevant dummy data
         assert (rows, count) == ([], 0)
 
     def test_org_engagement_tracking(self):
         user_page_access = UserTracking.org_engagement_tracking('','24')
+        # TODO: Modify assert to contain relevant dummy data
         assert user_page_access == ([], 0)
 
     def test_user_engagement_tracking(self):
         user_activity = UserTracking.user_engagement_tracking('','1')
+        # TODO: Modify assert to contain relevant dummy data
         assert user_activity == ([], 0)
