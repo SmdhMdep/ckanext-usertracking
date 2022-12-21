@@ -4,7 +4,7 @@ import pytest
 from ckan import model
 from ckan.tests import factories
 
-from ckanext.usertracking.usertracking import UserTracking
+from ckanext.usertracking.usertracking import UserTrackingDAO
 
 
 @pytest.mark.ckan_config('ckan.plugins', 'usertracking')
