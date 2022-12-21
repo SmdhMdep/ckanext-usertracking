@@ -39,14 +39,22 @@ class UsertrackingMiddleware(object):
             #if user is not logged in give a a set UUID
             try:
                 id = uuid.UUID(environ["webob._parsed_post_vars"][0]["id"])
-            except ValueError:
+            except:
                 id = "00000000-0000-0000-0000-000000000000"
 
-            #Get more data from post
-            name = environ["webob._parsed_post_vars"][0]["name"]
-            time = int(float(environ["webob._parsed_post_vars"][0]["time"]))
-            url = environ["webob._parsed_post_vars"][0]["url"]
+            #if user is not logged in give a a set name
+            try:
+                name = environ["webob._parsed_post_vars"][0]["name"]
+            except:
+                name = "guest"
 
+            time = int(float(environ["webob._parsed_post_vars"][0]["time"]))
+
+            try:
+                url = environ["webob._parsed_post_vars"][0]["url"]
+            except:
+                url = "/"
+            
             # Fix to once in a blue moon issue
             # Database uses SMALLINT, so if time is more than 32768, it will cause a problem
             if time > 32000:

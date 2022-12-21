@@ -7,11 +7,11 @@ Put a description of your extension here:  What does it do? What features does i
 
 The user tracking plugin adds an _Activity tracking_ tab in the CKAN admin page to show engagement/activity data.
 
-The plugin serves as a MVC for displaying 3 tables which inform of the user, organisational and individual-page engagement.
+The plugin serves as an MVC for displaying 3 tables which inform of the user, organisational and individual-page engagement.
 
 This necessitates the creation of the table _user_activity_tracker_ which is populated via JS embedded in all CKAN pages which send POST request to the usertracking middleware.
 
-The plugin also provides a CLI commnd to export the last x days of _user_activity_tracker_ into a CSV.
+The plugin also provides a CLI command to export the last x days of _user_activity_tracker_ into a CSV.
 
 
 ![User Engagement 1 page](./PageEngagement10Page.PNG)

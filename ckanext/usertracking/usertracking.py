@@ -117,8 +117,6 @@ class UserTrackingDAO(model.DomainObject):
             func.lower(general_sql.c.org).contains(searched_org.lower())
             ).order_by(
                 desc(general_sql.c.secs)
-            ).offset(
-                (page-1)*limit
             ).limit(limit)
 
         org_engagement = model.Session.execute(search_sql).fetchall()
@@ -181,8 +179,6 @@ class UserTrackingDAO(model.DomainObject):
             user_activity_tracker.c.name
         ).order_by(
             desc("secs")
-        ).offset(
-            (page-1)*limit
         ).limit(limit)
 
         user_engagement = model.Session.execute(sql).fetchall()
