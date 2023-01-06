@@ -14,7 +14,7 @@ class PluginTest(unittest.TestCase):
         self._tk = plugin.toolkit
         plugin.toolkit = MagicMock()
 
-        self._usertracking_lib = plugin.usertracking_lib
+        self._usertracking_lib = plugin.usertracking
         plugin.usertracking_lib = MagicMock()
 
         # Create the plugin
