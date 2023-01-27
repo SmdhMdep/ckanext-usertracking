@@ -4,6 +4,7 @@ from collections import namedtuple
 
 import ckanext.usertracking.usertracking as usertracking
 import ckanext.usertracking.middleware as usertracking_middleware
+import ckanext.usertracking.db as db
 
 import click
 from flask import Blueprint
@@ -83,12 +84,20 @@ def usertracking_view():
 
 class UsertrackingPlugin(plugins.SingletonPlugin):
     u'''User tracking plugin.'''
-
+    plugins.implements(plugins.IConfigurable)
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IBlueprint)
     plugins.implements(plugins.IMiddleware)
     plugins.implements(plugins.IClick)
 
+    #####################################################
+    ############# IConfigurable INTERFACE ###############
+    #####################################################
+
+    def configure(self, config):
+        if not db.user_activity_tracker_mapping_table.exists():
+            db.user_activity_tracker_mapping_table.create()
+    
     #####################################################
     ############## Configurer INTERFACE #################
     #####################################################
