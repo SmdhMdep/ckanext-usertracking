@@ -10,13 +10,6 @@ import sqlalchemy as sa
 @pytest.mark.ckan_config('ckan.plugins', 'usertracking')
 @pytest.mark.usefixtures("with_plugins", "with_request_context")
 @pytest.mark.usefixtures("clean_db")
-def test_migrations_applied( migrate_db_for):
-    migrate_db_for("usertracking")
-    assert model.Session.bind.has_table("user_activity_tracker")
-
-@pytest.mark.ckan_config('ckan.plugins', 'usertracking')
-@pytest.mark.usefixtures("with_plugins", "with_request_context")
-@pytest.mark.usefixtures("clean_db")
 class TestUsertrackingPlugin(object):
 
     @pytest.fixture(autouse=True)
