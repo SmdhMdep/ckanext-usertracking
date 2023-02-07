@@ -14,7 +14,7 @@ class TestUsertrackingPlugin(object):
 
     @pytest.fixture(autouse=True)
     def initial_data(self, clean_db, with_request_context):
-        engine = sa.create_engine("postgresql://ckan_default:J0o2eDRChOtE@127.0.0.1:5432/ckan_test")
+        engine = model.meta.engine
         dummyData = [["bbbd2457-4071-40bc-af88-5b84d895d419","ckan-admin5",["sme4"],"/dataset/b",10],["bbbd2457-4071-40bc-af88-5b84d895d418","ckan-admin4",["sme3"],"/dataset",10],["bbbd2457-4071-40bc-af88-5b84d895d417","ckan-admin2",["sme1"],"/dataset",3], ["00000000-0000-0000-0000-000000000000","ckan-admin3",["sme2"],"/dataset/a",3] ]
         for data in dummyData:
             sql = '''INSERT INTO user_activity_tracker
