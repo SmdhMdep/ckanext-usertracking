@@ -6,5 +6,5 @@
   {% asset 'base/tracking' %}
   {% asset 'ckanext_usertracking/tracking2' %}
   <p data-module="tracking2" data-module-id="{{ c.userobj.id }}" data-module-name="{{ c.userobj.name }}"></p>
-  {# {{ super() }} #}
+  {{ super() }}
 {% endblock %}
